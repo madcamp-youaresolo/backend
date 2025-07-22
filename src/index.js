@@ -1,9 +1,15 @@
 // src/index.js
 require('dotenv').config();
 const express = require('express');
-const db      = require('./db');
+const cors = require('cors');
+const db = require('./db');
 
 const app = express();
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json());
 
 // 프로필 저장
@@ -64,4 +70,4 @@ app.get('/api/stats', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server on ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Server on ${PORT}`));
