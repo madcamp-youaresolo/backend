@@ -42,21 +42,21 @@ app.post('/api/profiles', async (req, res) => {
   }
 });
 
-// 통계 조회
 app.get('/api/stats', async (req, res) => {
   try {
     const { rows: typeCounts } = await db.query(`
       SELECT
-        t.name   AS result_type,
-        COUNT(*) AS count
+      p.gender,
+      t.name   AS result_type,
+      COUNT(*) AS count
       FROM profile_types pt
-      JOIN types t
-        ON pt.type_id = t.id
-      GROUP BY t.name
-      ORDER BY count DESC
+      JOIN profiles p    ON pt.profile_id = p.id
+      JOIN types t       ON pt.type_id    = t.id
+      GROUP BY p.gender, t.name
+      ORDER BY p.gender, COUNT(*) DESC;
     `);
 
-    return res.json({ typeCounts });
+    res.json({ typeCounts });   // → [{ gender:'female', result_type:'영숙', count:5 }, …]
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: '서버 오류' });
